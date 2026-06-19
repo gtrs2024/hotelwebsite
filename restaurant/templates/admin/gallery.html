@@ -1,0 +1,62 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Gallery Management | Elara Admin{% endblock %}
+{% block page_title %}Gallery Management{% endblock %}
+{% block content %}
+
+<!-- Upload Form -->
+<div class="admin-form-card">
+  <h3><i class="fas fa-cloud-upload-alt" style="margin-right:10px;"></i>Add Gallery Image</h3>
+  <form method="POST" action="{{ url_for('admin_gallery_upload') }}" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+      <div class="admin-form-group">
+        <label>Upload Image File</label>
+        <input type="file" name="image" accept="image/*" style="padding:8px 0;border:none;background:none;color:var(--gray-light);">
+      </div>
+      <div class="admin-form-group">
+        <label>— or — Image URL</label>
+        <input type="url" name="image_url" placeholder="https://example.com/photo.jpg">
+      </div>
+    </div>
+    <div class="admin-form-group" style="margin-bottom:20px;">
+      <label>Caption (optional)</label>
+      <input type="text" name="caption" placeholder="e.g. The Main Dining Room">
+    </div>
+    <button type="submit" class="btn btn-primary">Add to Gallery</button>
+  </form>
+</div>
+
+<!-- Gallery Grid -->
+<div class="admin-card">
+  <div class="admin-card-header">
+    <h2>Gallery Images ({{ images | length }})</h2>
+  </div>
+  <div class="admin-card-body">
+    {% if images %}
+    <div class="gallery-admin-grid">
+      {% for img in images %}
+      <div class="gallery-admin-item">
+        <img src="{{ img.image_path }}" alt="{{ img.caption or 'Gallery image' }}" loading="lazy">
+        <div class="gallery-admin-item-overlay">
+          <form method="POST" action="{{ url_for('admin_gallery_delete', img_id=img.id) }}"
+                onsubmit="return confirm('Remove this image from the gallery?')">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="admin-btn danger" style="background:rgba(0,0,0,0.8);">
+              <i class="fas fa-trash"></i> Remove
+            </button>
+          </form>
+        </div>
+        {% if img.caption %}
+        <p style="padding:8px 10px;font-size:0.78rem;color:var(--gray);text-align:center;background:#0D0D0D;border-top:1px solid var(--border);">{{ img.caption }}</p>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p style="padding:48px;text-align:center;color:var(--gray);font-family:var(--font-sub);">No gallery images yet. Add your first image above.</p>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

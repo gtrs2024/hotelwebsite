@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Admin | Elara{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="admin-body">
+
+<aside class="admin-sidebar">
+  <div class="admin-sidebar-logo">
+    <span class="nav-logo"><span>E</span>lara</span>
+    <p>Admin Dashboard</p>
+  </div>
+  <nav class="admin-nav">
+    <a href="{{ url_for('admin_dashboard') }}" {% if request.endpoint == 'admin_dashboard' %}class="active"{% endif %}>
+      <i class="fas fa-th-large"></i> Overview
+    </a>
+    <a href="{{ url_for('admin_reservations') }}" {% if request.endpoint == 'admin_reservations' %}class="active"{% endif %}>
+      <i class="fas fa-calendar-check"></i> Reservations
+    </a>
+    <a href="{{ url_for('admin_menu') }}" {% if request.endpoint == 'admin_menu' %}class="active"{% endif %}>
+      <i class="fas fa-utensils"></i> Menu
+    </a>
+    <a href="{{ url_for('admin_gallery') }}" {% if request.endpoint == 'admin_gallery' %}class="active"{% endif %}>
+      <i class="fas fa-images"></i> Gallery
+    </a>
+    <a href="{{ url_for('index') }}" target="_blank">
+      <i class="fas fa-external-link-alt"></i> View Website
+    </a>
+  </nav>
+  <div class="admin-sidebar-footer">
+    <p style="font-size:0.68rem;color:var(--gray);margin-bottom:12px;">Signed in as <span style="color:var(--accent);">{{ session.admin_username }}</span></p>
+    <form method="POST" action="{{ url_for('admin_logout') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit"><i class="fas fa-sign-out-alt" style="margin-right:6px;"></i>Sign Out</button>
+    </form>
+  </div>
+</aside>
+
+<main class="admin-main">
+  <div class="admin-topbar">
+    <h1>{% block page_title %}Dashboard{% endblock %}</h1>
+    <div class="admin-topbar-info">
+      <span>{{ session.admin_username }}</span> &nbsp;·&nbsp; Elara Admin
+    </div>
+  </div>
+
+  <div class="admin-content">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-messages">
+      {% for category, msg in messages %}
+      <div class="flash-msg {{ category }}">
+        <i class="fas {% if category == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %}" style="margin-right:8px;"></i>{{ msg }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </div>
+</main>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

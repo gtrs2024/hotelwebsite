@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login | Elara</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="admin-body">
+
+<div class="admin-login-page">
+  <div class="admin-login-bg"></div>
+  <div class="admin-login-card">
+    <div class="admin-login-logo">
+      <span class="nav-logo"><span>E</span>lara</span>
+      <p>Admin Portal</p>
+    </div>
+
+    {% if error %}
+    <div class="admin-login-error"><i class="fas fa-exclamation-circle" style="margin-right:8px;"></i>{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('admin_login') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="admin-form-group" style="margin-bottom:18px;">
+        <label for="username"><i class="fas fa-user" style="margin-right:6px;"></i>Username</label>
+        <input type="text" id="username" name="username" placeholder="Enter username" required autofocus>
+      </div>
+      <div class="admin-form-group" style="margin-bottom:28px;">
+        <label for="password"><i class="fas fa-lock" style="margin-right:6px;"></i>Password</label>
+        <input type="password" id="password" name="password" placeholder="Enter password" required>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;text-align:center;">Sign In</button>
+    </form>
+
+    <p style="text-align:center;margin-top:28px;font-size:0.72rem;color:var(--gray);">
+      <a href="{{ url_for('index') }}" style="color:var(--accent);">← Back to Website</a>
+    </p>
+  </div>
+</div>
+
+</body>
+</html>

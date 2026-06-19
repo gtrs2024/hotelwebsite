@@ -1,0 +1,112 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Reservations | Elara Admin{% endblock %}
+{% block page_title %}Reservation Requests{% endblock %}
+{% block content %}
+
+<form method="GET" action="{{ url_for('admin_reservations') }}" class="search-bar">
+  <input type="text" name="q" value="{{ search }}" placeholder="Search by name, email, or phone...">
+  <select name="status">
+    <option value="">All Statuses</option>
+    <option value="New" {% if status_filter == 'New' %}selected{% endif %}>New</option>
+    <option value="Contacted" {% if status_filter == 'Contacted' %}selected{% endif %}>Contacted</option>
+    <option value="Pending" {% if status_filter == 'Pending' %}selected{% endif %}>Pending</option>
+  </select>
+  <button type="submit" class="admin-btn" style="padding:10px 20px;">Search</button>
+  {% if search or status_filter %}
+  <a href="{{ url_for('admin_reservations') }}" class="admin-btn" style="padding:10px 20px;">Clear</a>
+  {% endif %}
+</form>
+
+<div class="admin-card">
+  <div class="admin-card-header">
+    <h2>All Requests ({{ reservations | length }})</h2>
+  </div>
+  <div class="admin-card-body">
+    {% if reservations %}
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Contact</th>
+          <th>Date & Time</th>
+          <th>Guests</th>
+          <th>Special Requests</th>
+          <th>Status</th>
+          <th>Received</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in reservations %}
+        <tr>
+          <td style="color:var(--gray);">{{ r.id }}</td>
+          <td style="color:var(--white);font-weight:500;">{{ r.customer_name }}</td>
+          <td>
+            <span style="display:block;">{{ r.email }}</span>
+            <span style="color:var(--accent);font-size:0.82rem;">{{ r.phone }}</span>
+          </td>
+          <td>{{ r.preferred_date }}<br><span style="color:var(--accent);">{{ r.preferred_time }}</span></td>
+          <td style="text-align:center;">{{ r.guests }}</td>
+          <td style="max-width:180px;font-family:var(--font-sub);font-size:0.88rem;color:var(--gray);">
+            {{ r.special_requests or '—' }}
+          </td>
+          <td><span class="badge badge-{{ r.status | lower }}">{{ r.status }}</span></td>
+          <td style="color:var(--gray);font-size:0.8rem;">{{ r.created_at[:16] }}</td>
+          <td>
+            <div class="admin-actions">
+              <!-- Status dropdown -->
+              <div style="position:relative;display:inline-block;" class="status-dropdown-wrapper">
+                <button class="admin-btn status-dropdown-trigger">Update ▾</button>
+                <div class="status-dropdown-menu" style="display:none;position:absolute;right:0;top:100%;background:#111;border:1px solid var(--border);z-index:99;min-width:130px;">
+                  {% for s in ['New', 'Contacted', 'Pending'] %}
+                  <form method="POST" action="{{ url_for('update_reservation_status', res_id=r.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="status" value="{{ s }}">
+                    <button type="submit" class="admin-btn"
+                            style="width:100%;text-align:left;border:none;border-bottom:1px solid var(--border);padding:10px 16px;
+                                   {% if r.status == s %}color:var(--accent);{% endif %}">
+                      {{ s }}
+                    </button>
+                  </form>
+                  {% endfor %}
+                </div>
+              </div>
+              <form method="POST" action="{{ url_for('delete_reservation', res_id=r.id) }}"
+                    onsubmit="return confirm('Delete this reservation request?')">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="admin-btn danger"><i class="fas fa-trash"></i></button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p style="padding:48px;text-align:center;color:var(--gray);font-family:var(--font-sub);">
+      No reservation requests found{% if search or status_filter %} matching your search{% endif %}.
+    </p>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.querySelectorAll('.status-dropdown-trigger').forEach(btn => {
+  btn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    const menu = this.nextElementSibling;
+    document.querySelectorAll('.status-dropdown-menu').forEach(m => {
+      if (m !== menu) m.style.display = 'none';
+    });
+    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+  });
+});
+document.addEventListener('click', () => {
+  document.querySelectorAll('.status-dropdown-menu').forEach(m => m.style.display = 'none');
+});
+</script>
+{% endblock %}

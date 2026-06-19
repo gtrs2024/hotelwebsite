@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Gallery | Elara Fine Dining{% endblock %}
+{% block content %}
+
+<div class="page-hero">
+  <div class="page-hero-bg" style="background-image:url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1600&q=80')"></div>
+  <div class="page-hero-overlay"></div>
+  <div class="page-hero-content">
+    <span class="eyebrow" style="text-align:center;display:block;">A Visual Journey</span>
+    <h1 class="page-hero-title">Gallery</h1>
+    <div class="accent-line centered"></div>
+  </div>
+</div>
+
+<section class="section section-dark">
+  <div class="container">
+    {% if images %}
+    <div class="gallery-full-grid" id="gallery">
+      {% for img in images %}
+      <div class="gallery-full-item reveal" data-index="{{ loop.index0 }}">
+        <img src="{{ img.image_path }}" alt="{{ img.caption or 'Elara Dining' }}" loading="lazy">
+        <div class="gallery-caption-overlay">
+          <p>{{ img.caption or '' }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p style="text-align:center;color:var(--gray);font-family:var(--font-sub);padding:60px 0;">Gallery coming soon.</p>
+    {% endif %}
+  </div>
+</section>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose">&times;</button>
+  <button class="lightbox-nav lightbox-prev" id="lightboxPrev"><i class="fas fa-chevron-left"></i></button>
+  <img class="lightbox-img" id="lightboxImg" src="" alt="">
+  <button class="lightbox-nav lightbox-next" id="lightboxNext"><i class="fas fa-chevron-right"></i></button>
+  <p class="lightbox-caption" id="lightboxCaption"></p>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+const images = [
+  {% for img in images %}
+  { src: "{{ img.image_path }}", caption: "{{ img.caption or '' }}" }{% if not loop.last %},{% endif %}
+  {% endfor %}
+];
+let currentIdx = 0;
+
+const lightbox = document.getElementById('lightbox');
+const lbImg    = document.getElementById('lightboxImg');
+const lbCap    = document.getElementById('lightboxCaption');
+
+function openLightbox(idx) {
+  currentIdx = idx;
+  lbImg.src  = images[idx].src;
+  lbCap.textContent = images[idx].caption;
+  lightbox.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  lightbox.classList.remove('active');
+  document.body.style.overflow = '';
+}
+function showNext() { currentIdx = (currentIdx + 1) % images.length; openLightbox(currentIdx); }
+function showPrev() { currentIdx = (currentIdx - 1 + images.length) % images.length; openLightbox(currentIdx); }
+
+document.querySelectorAll('.gallery-full-item').forEach(item => {
+  item.addEventListener('click', () => openLightbox(parseInt(item.dataset.index)));
+});
+document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+document.getElementById('lightboxNext').addEventListener('click', showNext);
+document.getElementById('lightboxPrev').addEventListener('click', showPrev);
+lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+document.addEventListener('keydown', e => {
+  if (!lightbox.classList.contains('active')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowRight') showNext();
+  if (e.key === 'ArrowLeft') showPrev();
+});
+</script>
+{% endblock %}

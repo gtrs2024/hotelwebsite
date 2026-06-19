@@ -1,0 +1,142 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Menu Management | Elara Admin{% endblock %}
+{% block page_title %}Menu Management{% endblock %}
+{% block content %}
+
+<!-- Add Item Form -->
+<div class="admin-form-card">
+  <h3><i class="fas fa-plus-circle" style="margin-right:10px;"></i>Add New Menu Item</h3>
+  <form method="POST" action="{{ url_for('admin_menu_add') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="admin-form-grid">
+      <div class="admin-form-group">
+        <label>Category *</label>
+        <select name="category" required>
+          <option value="">Select Category</option>
+          {% for cat in categories %}
+          <option value="{{ cat }}">{{ cat }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="admin-form-group">
+        <label>Item Name *</label>
+        <input type="text" name="name" placeholder="e.g. Truffle Risotto" required>
+      </div>
+      <div class="admin-form-group">
+        <label>Price (₹) *</label>
+        <input type="number" name="price" placeholder="e.g. 1200" step="0.01" min="0" required>
+      </div>
+      <div class="admin-form-group full">
+        <label>Description</label>
+        <input type="text" name="description" placeholder="Brief description of the dish...">
+      </div>
+    </div>
+    <div style="margin-top:20px;">
+      <button type="submit" class="btn btn-primary">Add Item</button>
+    </div>
+  </form>
+</div>
+
+<!-- Menu Items Table -->
+{% for cat in categories %}
+{% if items | selectattr("category", "equalto", cat) | list %}
+<div class="admin-card" style="margin-bottom:24px;">
+  <div class="admin-card-header">
+    <h2>{{ cat }}</h2>
+    <span style="font-size:0.72rem;color:var(--gray);letter-spacing:0.14em;">
+      {{ items | selectattr("category", "equalto", cat) | list | length }} items
+    </span>
+  </div>
+  <div class="admin-card-body">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Price</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        {% if item.category == cat %}
+        <tr id="row-{{ item.id }}">
+          <td style="color:var(--white);">{{ item.name }}</td>
+          <td style="font-family:var(--font-sub);color:var(--gray);max-width:280px;">{{ item.description or '—' }}</td>
+          <td style="color:var(--accent);">₹{{ "%.0f"|format(item.price) }}</td>
+          <td>
+            <div class="admin-actions">
+              <button class="admin-btn" onclick="openEdit({{ item.id }}, '{{ item.category }}', '{{ item.name | replace("'","\\\'") }}', '{{ item.description | replace("'","\\\'") }}', {{ item.price }})">
+                <i class="fas fa-edit"></i> Edit
+              </button>
+              <form method="POST" action="{{ url_for('admin_menu_delete', item_id=item.id) }}"
+                    onsubmit="return confirm('Delete this item?')">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="admin-btn danger"><i class="fas fa-trash"></i></button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+{% endfor %}
+
+<!-- Edit Modal -->
+<div id="editModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;align-items:center;justify-content:center;">
+  <div style="background:#111;border:1px solid var(--border);padding:40px;width:90%;max-width:560px;position:relative;">
+    <button onclick="closeEdit()" style="position:absolute;top:16px;right:20px;background:none;border:none;color:var(--white);font-size:1.4rem;cursor:pointer;">&times;</button>
+    <h3 style="font-family:var(--font-heading);font-size:1.2rem;margin-bottom:24px;color:var(--accent);">Edit Menu Item</h3>
+    <form method="POST" id="editForm">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="admin-form-grid">
+        <div class="admin-form-group">
+          <label>Category</label>
+          <select name="category" id="editCategory">
+            {% for cat in categories %}
+            <option value="{{ cat }}">{{ cat }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="admin-form-group">
+          <label>Name</label>
+          <input type="text" name="name" id="editName" required>
+        </div>
+        <div class="admin-form-group">
+          <label>Price (₹)</label>
+          <input type="number" name="price" id="editPrice" step="0.01" min="0" required>
+        </div>
+        <div class="admin-form-group full">
+          <label>Description</label>
+          <input type="text" name="description" id="editDescription">
+        </div>
+      </div>
+      <div style="margin-top:24px;">
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <button type="button" onclick="closeEdit()" class="btn btn-outline" style="margin-left:12px;">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+function openEdit(id, cat, name, desc, price) {
+  document.getElementById('editModal').style.display = 'flex';
+  document.getElementById('editForm').action = '/admin/menu/' + id + '/edit';
+  document.getElementById('editCategory').value = cat;
+  document.getElementById('editName').value = name;
+  document.getElementById('editDescription').value = desc;
+  document.getElementById('editPrice').value = price;
+}
+function closeEdit() {
+  document.getElementById('editModal').style.display = 'none';
+}
+</script>
+{% endblock %}

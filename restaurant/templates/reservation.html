@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% block title %}Reserve a Table | Elara Fine Dining{% endblock %}
+{% block content %}
+
+<div class="page-hero">
+  <div class="page-hero-bg" style="background-image:url('https://images.unsplash.com/photo-1537047902294-62a40c20a6ae?w=1600&q=80')"></div>
+  <div class="page-hero-overlay"></div>
+  <div class="page-hero-content">
+    <span class="eyebrow" style="text-align:center;display:block;">An Invitation</span>
+    <h1 class="page-hero-title">Reserve Your Table</h1>
+    <div class="accent-line centered"></div>
+  </div>
+</div>
+
+<section class="section section-dark reservation-form-section">
+  <div class="container">
+    <div class="reservation-form-wrapper">
+
+      <!-- Info Panel -->
+      <div class="reservation-info reveal">
+        <span class="eyebrow">Before You Arrive</span>
+        <h3>A Few Things to Know</h3>
+        <div class="accent-line"></div>
+        <p>Elara seats a maximum of 48 guests each evening to preserve the intimacy of the experience. We do not operate an automated booking engine — all reservations are confirmed personally by our team.</p>
+        <p>Submit your request below and our reservations team will contact you within 4 hours to confirm availability and finalise your booking details.</p>
+
+        <div class="reservation-hours" style="margin-top:40px;">
+          <h5>Dining Hours</h5>
+          <table>
+            <tr><td>Breakfast</td><td>07:30 – 10:30</td></tr>
+            <tr><td>Lunch</td><td>12:30 – 14:30</td></tr>
+            <tr><td>Dinner</td><td>19:00 – 22:30</td></tr>
+          </table>
+        </div>
+
+        <div style="margin-top:36px;">
+          <h5 style="font-size:0.68rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;">Enquiries</h5>
+          <p style="font-family:var(--font-sub);font-size:1rem;color:var(--gray-light);">
+            <i class="fas fa-phone-alt" style="color:var(--accent);margin-right:10px;"></i> +91 2114 200 100<br><br>
+            <i class="fas fa-envelope" style="color:var(--accent);margin-right:10px;"></i> reservations@elaralonavala.com
+          </p>
+        </div>
+      </div>
+
+      <!-- Form Panel -->
+      <div class="reveal reveal-delay-2">
+        {% if success %}
+        <div class="success-message">
+          <div class="success-icon"><i class="fas fa-check-circle"></i></div>
+          <h3>Request Received</h3>
+          <div class="accent-line centered"></div>
+          <p>Thank you for your request. Our reservations team will contact you shortly to confirm your reservation. We look forward to welcoming you to Elara.</p>
+          <br>
+          <a href="{{ url_for('index') }}" class="btn btn-primary" style="display:inline-block;">Back to Home</a>
+        </div>
+        {% else %}
+        <div class="form-card">
+          <span class="eyebrow">Reservation Inquiry</span>
+          <h3 style="font-family:var(--font-heading);font-size:1.6rem;margin-bottom:30px;">Your Details</h3>
+
+          {% if errors %}
+          <ul class="form-errors">
+            {% for error in errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+
+          <form method="POST" action="{{ url_for('reservation') }}" novalidate>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="customer_name">Full Name *</label>
+                <input type="text" id="customer_name" name="customer_name"
+                       value="{{ form.get('customer_name','') }}"
+                       placeholder="Your full name" required>
+              </div>
+              <div class="form-group">
+                <label for="phone">Phone Number *</label>
+                <input type="tel" id="phone" name="phone"
+                       value="{{ form.get('phone','') }}"
+                       placeholder="+91 98765 43210" required>
+              </div>
+              <div class="form-group full">
+                <label for="email">Email Address *</label>
+                <input type="email" id="email" name="email"
+                       value="{{ form.get('email','') }}"
+                       placeholder="your@email.com" required>
+              </div>
+              <div class="form-group">
+                <label for="preferred_date">Preferred Date *</label>
+                <input type="date" id="preferred_date" name="preferred_date"
+                       value="{{ form.get('preferred_date','') }}" required>
+              </div>
+              <div class="form-group">
+                <label for="preferred_time">Preferred Time *</label>
+                <select id="preferred_time" name="preferred_time" required>
+                  <option value="" disabled {% if not form.get('preferred_time') %}selected{% endif %}>Select time</option>
+                  <optgroup label="Breakfast">
+                    <option value="07:30" {% if form.get('preferred_time')=='07:30' %}selected{% endif %}>07:30</option>
+                    <option value="08:00" {% if form.get('preferred_time')=='08:00' %}selected{% endif %}>08:00</option>
+                    <option value="08:30" {% if form.get('preferred_time')=='08:30' %}selected{% endif %}>08:30</option>
+                    <option value="09:00" {% if form.get('preferred_time')=='09:00' %}selected{% endif %}>09:00</option>
+                    <option value="10:00" {% if form.get('preferred_time')=='10:00' %}selected{% endif %}>10:00</option>
+                  </optgroup>
+                  <optgroup label="Lunch">
+                    <option value="12:30" {% if form.get('preferred_time')=='12:30' %}selected{% endif %}>12:30</option>
+                    <option value="13:00" {% if form.get('preferred_time')=='13:00' %}selected{% endif %}>13:00</option>
+                    <option value="13:30" {% if form.get('preferred_time')=='13:30' %}selected{% endif %}>13:30</option>
+                    <option value="14:00" {% if form.get('preferred_time')=='14:00' %}selected{% endif %}>14:00</option>
+                  </optgroup>
+                  <optgroup label="Dinner">
+                    <option value="19:00" {% if form.get('preferred_time')=='19:00' %}selected{% endif %}>19:00</option>
+                    <option value="19:30" {% if form.get('preferred_time')=='19:30' %}selected{% endif %}>19:30</option>
+                    <option value="20:00" {% if form.get('preferred_time')=='20:00' %}selected{% endif %}>20:00</option>
+                    <option value="20:30" {% if form.get('preferred_time')=='20:30' %}selected{% endif %}>20:30</option>
+                    <option value="21:00" {% if form.get('preferred_time')=='21:00' %}selected{% endif %}>21:00</option>
+                    <option value="21:30" {% if form.get('preferred_time')=='21:30' %}selected{% endif %}>21:30</option>
+                  </optgroup>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="guests">Number of Guests *</label>
+                <select id="guests" name="guests" required>
+                  <option value="" disabled {% if not form.get('guests') %}selected{% endif %}>Select guests</option>
+                  {% for n in range(1, 13) %}
+                  <option value="{{ n }}" {% if form.get('guests')|string == n|string %}selected{% endif %}>{{ n }} {% if n == 1 %}Guest{% else %}Guests{% endif %}</option>
+                  {% endfor %}
+                  <option value="12">12+ (Please call us)</option>
+                </select>
+              </div>
+              <div class="form-group full">
+                <label for="special_requests">Special Requests</label>
+                <textarea id="special_requests" name="special_requests"
+                          placeholder="Dietary requirements, occasion, seating preference...">{{ form.get('special_requests','') }}</textarea>
+              </div>
+            </div>
+            <div class="form-submit">
+              <button type="submit" class="btn btn-primary">Submit Reservation Request</button>
+            </div>
+          </form>
+        </div>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}

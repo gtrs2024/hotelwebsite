@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Elara Fine Dining — A premier luxury restaurant nestled in the Sahyadri hills of Lonavala, Maharashtra.">
+  <title>{% block title %}Elara | Luxury Fine Dining, Lonavala{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  {% block head %}{% endblock %}
+</head>
+<body>
+
+<!-- ── Navigation ─────────────────────────────────────── -->
+<nav class="navbar" id="navbar">
+  <a href="{{ url_for('index') }}" class="nav-logo"><span>E</span>lara</a>
+  <ul class="nav-links">
+    <li><a href="{{ url_for('index') }}" {% if request.endpoint == 'index' %}class="active"{% endif %}>Home</a></li>
+    <li><a href="{{ url_for('menu') }}" {% if request.endpoint == 'menu' %}class="active"{% endif %}>Menu</a></li>
+    <li><a href="{{ url_for('gallery') }}" {% if request.endpoint == 'gallery' %}class="active"{% endif %}>Gallery</a></li>
+    <li><a href="{{ url_for('contact') }}" {% if request.endpoint == 'contact' %}class="active"{% endif %}>Contact</a></li>
+    <li><a href="{{ url_for('reservation') }}" class="btn btn-ghost nav-cta">Reserve a Table</a></li>
+  </ul>
+  <button class="nav-toggle" id="navToggle" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile Nav -->
+<nav class="nav-mobile" id="navMobile">
+  <button class="nav-mobile-close" id="navClose" aria-label="Close menu">&times;</button>
+  <a href="{{ url_for('index') }}" onclick="closeNav()">Home</a>
+  <a href="{{ url_for('menu') }}" onclick="closeNav()">Menu</a>
+  <a href="{{ url_for('gallery') }}" onclick="closeNav()">Gallery</a>
+  <a href="{{ url_for('contact') }}" onclick="closeNav()">Contact</a>
+  <a href="{{ url_for('reservation') }}" onclick="closeNav()">Reserve</a>
+</nav>
+
+{% block content %}{% endblock %}
+
+<!-- ── Footer ─────────────────────────────────────────── -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="{{ url_for('index') }}" class="nav-logo"><span>E</span>lara</a>
+        <p>An intimate fine-dining sanctuary perched in the Sahyadri hills, where every plate tells a story of land, season, and craft.</p>
+        <div class="footer-social">
+          <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h5>Navigate</h5>
+        <ul>
+          <li><a href="{{ url_for('index') }}">Home</a></li>
+          <li><a href="{{ url_for('menu') }}">Our Menu</a></li>
+          <li><a href="{{ url_for('gallery') }}">Gallery</a></li>
+          <li><a href="{{ url_for('reservation') }}">Reserve a Table</a></li>
+          <li><a href="{{ url_for('contact') }}">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Visit Us</h5>
+        <ul>
+          <li><a href="#">The Ridge, Lonavala<br>Maharashtra 410401</a></li>
+          <li><a href="tel:+912114200100">+91 2114 200 100</a></li>
+          <li><a href="mailto:reservations@elaraLonavala.com">reservations@elaralonavala.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; {{ current_year }} <a href="{{ url_for('index') }}">Elara Fine Dining</a>. All rights reserved.</p>
+      <p>Lonavala, Maharashtra, India</p>
+    </div>
+  </div>
+</footer>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

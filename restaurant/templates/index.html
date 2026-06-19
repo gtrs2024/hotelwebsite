@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+{% block title %}Elara | Luxury Fine Dining, Lonavala{% endblock %}
+{% block content %}
+
+<!-- ── Hero ───────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <span class="hero-eyebrow">Est. 2018 &nbsp;·&nbsp; Lonavala, Maharashtra</span>
+    <h1 class="hero-title">Where the Hills<br>Meet <em>Fine Dining</em></h1>
+    <p class="hero-tagline">An intimate sanctuary of flavour, craft, and unhurried elegance<br>set against the mist of the Sahyadri mountains.</p>
+    <div class="hero-actions">
+      <a href="{{ url_for('reservation') }}" class="btn btn-primary">Reserve a Table</a>
+      <a href="{{ url_for('menu') }}" class="btn btn-outline">Explore the Menu</a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="hero-scroll-line"></div>
+  </div>
+</section>
+
+<!-- ── About ───────────────────────────────────────────── -->
+<section class="section section-dark" id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-img-wrapper reveal">
+        <img class="about-img-main"
+             src="https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?w=900&q=80"
+             alt="Elara Chef at work"
+             loading="lazy">
+        <img class="about-img-accent"
+             src="https://images.unsplash.com/photo-1559339352-11d035aa65de?w=500&q=80"
+             alt="Fine dining detail"
+             loading="lazy">
+      </div>
+      <div class="about-content reveal reveal-delay-2">
+        <span class="eyebrow">Our Story</span>
+        <h2 class="section-title">A Philosophy of<br>Honest Luxury</h2>
+        <div class="accent-line"></div>
+        <p>Nestled at 620 metres above sea level, Elara was conceived as an antidote to noise — a place where guests arrive to slow down and leave having truly tasted something. Our kitchen is led by Executive Chef Arjun Mehta, whose decade at Michelin-starred kitchens across Europe and Mumbai informs every plate.</p>
+        <p>We source within 200 km of our kitchen. Vegetables from Mahabaleshwar farms, seafood from Ratnagiri fishermen, and single-estate dairy from the Deccan Plateau. Luxury, for us, begins with provenance.</p>
+        <div class="about-stats">
+          <div class="stat-item">
+            <span class="stat-number">6+</span>
+            <span class="stat-label">Years of Service</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">3</span>
+            <span class="stat-label">Dining Spaces</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">48</span>
+            <span class="stat-label">Covers Nightly</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Experiences ─────────────────────────────────────── -->
+<section class="section section-muted" id="experiences">
+  <div class="container">
+    <div class="experiences-header reveal">
+      <span class="eyebrow" style="text-align:center;display:block;">Signature Experiences</span>
+      <h2 class="section-title" style="text-align:center;">Every Hour, a New Ritual</h2>
+      <div class="accent-line centered"></div>
+      <p class="section-subtitle" style="text-align:center;margin:0 auto;">From unhurried morning breakfasts to candlelit dinners under the valley sky, Elara offers a distinct dining character at every hour.</p>
+    </div>
+    <div class="experiences-grid">
+      <div class="experience-card reveal">
+        <img class="experience-img"
+             src="https://images.unsplash.com/photo-1533089860892-a7c6f10a081a?w=1200&q=80"
+             alt="Dinner Experience" loading="lazy">
+        <div class="experience-overlay">
+          <span class="experience-tag">Evening</span>
+          <h3 class="experience-title">The Dinner Ritual</h3>
+          <p class="experience-desc">A seven-course progression through the season's finest, paired with reserve wines selected by our sommelier. Candlelight, mountain air, and nothing rushed.</p>
+          <a href="{{ url_for('reservation') }}" class="btn btn-ghost">Reserve Dinner</a>
+        </div>
+      </div>
+      <div class="experience-card reveal reveal-delay-1">
+        <img class="experience-img"
+             src="https://images.unsplash.com/photo-1533089860892-a7c6f10a081a?w=600&q=80"
+             alt="Breakfast" loading="lazy"
+             style="background:url('https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=600&q=80') center/cover">
+        <div class="experience-overlay">
+          <span class="experience-tag">Morning</span>
+          <h3 class="experience-title">Sunrise Breakfast</h3>
+          <p class="experience-desc">Start your morning with freshly baked breads, valley views, and a coffee flight sourced from South Indian estates.</p>
+          <a href="{{ url_for('menu') }}" class="btn btn-ghost">View Breakfast</a>
+        </div>
+      </div>
+      <div class="experience-card reveal reveal-delay-2">
+        <img class="experience-img"
+             src="https://images.unsplash.com/photo-1551024601-bec78aea704b?w=600&q=80"
+             alt="Desserts" loading="lazy">
+        <div class="experience-overlay">
+          <span class="experience-tag">Afternoon</span>
+          <h3 class="experience-title">The Dessert Atelier</h3>
+          <p class="experience-desc">Our pastry kitchen crafts seasonal confections daily. Drop in for an afternoon menu of teas, petit fours, and artisan desserts.</p>
+          <a href="{{ url_for('menu') }}" class="btn btn-ghost">View Desserts</a>
+        </div>
+      </div>
+      <div class="experience-card reveal reveal-delay-1">
+        <img class="experience-img"
+             src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=600&q=80"
+             alt="Cocktails" loading="lazy">
+        <div class="experience-overlay">
+          <span class="experience-tag">Evenings</span>
+          <h3 class="experience-title">The Bar at Elara</h3>
+          <p class="experience-desc">Our bar program draws from India's growing craft spirits scene. Signature cocktails, curated wines, and an intimate bar setting.</p>
+          <a href="{{ url_for('menu') }}" class="btn btn-ghost">View Bar Menu</a>
+        </div>
+      </div>
+      <div class="experience-card reveal reveal-delay-2">
+        <img class="experience-img"
+             src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=600&q=80"
+             alt="Private Dining" loading="lazy">
+        <div class="experience-overlay">
+          <span class="experience-tag">Occasions</span>
+          <h3 class="experience-title">Private Dining</h3>
+          <p class="experience-desc">For birthdays, proposals, and intimate celebrations — a fully private dining room with bespoke menu and dedicated service.</p>
+          <a href="{{ url_for('contact') }}" class="btn btn-ghost">Enquire</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Menu Preview ────────────────────────────────────── -->
+<section class="section section-dark menu-preview-section" id="menu-preview">
+  <div class="container">
+    <div class="menu-preview-header reveal">
+      <div>
+        <span class="eyebrow">From Our Kitchen</span>
+        <h2 class="section-title">A Taste of the Menu</h2>
+      </div>
+      <a href="{{ url_for('menu') }}" class="btn btn-outline">Full Menu</a>
+    </div>
+    <div class="menu-items-grid reveal">
+      {% for item in menu_preview %}
+      <div class="menu-item-card">
+        <div class="menu-item-info">
+          <span class="menu-item-category">{{ item.category }}</span>
+          <div class="menu-item-name">{{ item.name }}</div>
+          <div class="menu-item-desc">{{ item.description }}</div>
+        </div>
+        <div class="menu-item-price">₹{{ "%.0f"|format(item.price) }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ── Gallery Preview ─────────────────────────────────── -->
+<section class="section section-muted" id="gallery-preview">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:56px;" class="reveal">
+      <span class="eyebrow">Visual Story</span>
+      <h2 class="section-title">Inside Elara</h2>
+      <div class="accent-line centered"></div>
+    </div>
+    <div class="gallery-grid reveal">
+      {% for img in gallery_preview %}
+      <div class="gallery-item">
+        <img src="{{ img.image_path }}" alt="{{ img.caption or 'Elara Gallery' }}" loading="lazy">
+        <div class="gallery-item-overlay">
+          <div class="gallery-icon"><i class="fas fa-expand"></i></div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div style="text-align:center;margin-top:48px;" class="reveal">
+      <a href="{{ url_for('gallery') }}" class="btn btn-outline">View Full Gallery</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── Reservation CTA ─────────────────────────────────── -->
+<section class="reservation-cta">
+  <div class="reservation-cta-bg"></div>
+  <div class="reservation-cta-overlay"></div>
+  <div class="reservation-cta-content reveal">
+    <span class="eyebrow" style="text-align:center;display:block;">Book Your Evening</span>
+    <h2 class="section-title">Ready to Experience Elara?</h2>
+    <div class="accent-line centered"></div>
+    <p class="section-subtitle">We seat a maximum of 48 guests each evening to ensure an unhurried, personal experience. Reserve your table today.</p>
+    <br>
+    <a href="{{ url_for('reservation') }}" class="btn btn-primary">Request a Reservation</a>
+  </div>
+</section>
+
+<!-- ── Contact Preview ─────────────────────────────────── -->
+<section class="section section-dark" id="find-us">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:56px;" class="reveal">
+      <span class="eyebrow">Find Us</span>
+      <h2 class="section-title">How to Reach Elara</h2>
+      <div class="accent-line centered"></div>
+    </div>
+    <div class="contact-preview-grid reveal">
+      <div class="contact-item">
+        <span class="contact-icon"><i class="fas fa-map-marker-alt"></i></span>
+        <h4>Address</h4>
+        <p>The Ridge Estate, Old Mumbai–Pune Road<br>Lonavala, Maharashtra 410 401</p>
+      </div>
+      <div class="contact-item">
+        <span class="contact-icon"><i class="fas fa-phone-alt"></i></span>
+        <h4>Reservations</h4>
+        <p>+91 2114 200 100<br>reservations@elaralonavala.com</p>
+      </div>
+      <div class="contact-item">
+        <span class="contact-icon"><i class="fas fa-clock"></i></span>
+        <h4>Hours</h4>
+        <p>Breakfast &nbsp;07:30 – 10:30<br>Lunch &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;12:30 – 14:30<br>Dinner &nbsp;&nbsp;&nbsp;&nbsp;19:00 – 22:30</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
