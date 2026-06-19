@@ -1375,3 +1375,285 @@ h1, h2, h3, h4 { font-family: var(--font-heading); font-weight: 400; line-height
 
 /* Currency */
 .rupee::before { content: '₹'; }
+
+/* ═══════════════════════════════════════════════════════════
+   NEW: Customer Accounts, Auth Pages, Dashboard
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Navbar member avatar ───────────────────────────────── */
+.nav-avatar {
+  width: 28px; height: 28px;
+  background: var(--accent);
+  color: var(--primary);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  flex-shrink: 0;
+}
+.nav-member-link {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Auth Pages ─────────────────────────────────────────── */
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 100px 20px 60px;
+}
+.auth-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.12;
+}
+.auth-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(10,10,10,0.95), rgba(20,16,10,0.92));
+}
+.auth-card {
+  position: relative;
+  z-index: 2;
+  background: #111111;
+  border: 1px solid var(--border);
+  padding: 52px 48px;
+  width: 100%;
+  max-width: 520px;
+}
+.auth-card-header { text-align: center; margin-bottom: 32px; }
+.auth-subtitle {
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gray);
+  margin-top: 8px;
+}
+.auth-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.auth-switch {
+  text-align: center;
+  margin-top: 28px;
+  font-family: var(--font-sub);
+  font-size: 1rem;
+  color: var(--gray);
+}
+.auth-switch a { color: var(--accent); transition: opacity 0.2s; }
+.auth-switch a:hover { opacity: 0.8; }
+
+@media (max-width: 560px) {
+  .auth-card { padding: 36px 28px; }
+  .auth-form-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Customer Dashboard ─────────────────────────────────── */
+.customer-dashboard-grid {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+.cust-card {
+  background: #161616;
+  border: 1px solid var(--border);
+}
+.cust-card-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.cust-card-body { padding: 24px; }
+
+.cust-avatar {
+  width: 72px; height: 72px;
+  background: var(--accent);
+  color: var(--primary);
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+}
+.cust-profile-info { display: flex; flex-direction: column; gap: 0; }
+.cust-info-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(200,169,106,0.1);
+}
+.cust-info-row:last-child { border-bottom: none; }
+.cust-info-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.cust-info-label i { margin-right: 6px; }
+.cust-info-value {
+  font-family: var(--font-sub);
+  font-size: 1rem;
+  color: var(--gray-light);
+}
+
+.cust-stats {
+  display: flex;
+  justify-content: space-around;
+  gap: 12px;
+}
+.cust-stat { text-align: center; }
+.cust-stat-num {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  color: var(--accent);
+  display: block;
+}
+.cust-stat-lbl {
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gray);
+}
+
+/* Reservation rows in customer dashboard */
+.res-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 22px 24px;
+  gap: 16px;
+}
+.res-row-border { border-bottom: 1px solid rgba(200,169,106,0.1); }
+.res-row-main { flex: 1; }
+.res-row-meta { flex-shrink: 0; text-align: right; }
+
+/* Customer status badges */
+.cust-badge {
+  display: inline-block;
+  padding: 3px 12px;
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border: 1px solid;
+  flex-shrink: 0;
+}
+.cust-badge-new       { color: #7BD8A0; border-color: rgba(123,216,160,0.4); }
+.cust-badge-accepted  { color: var(--accent); border-color: var(--accent); background: rgba(200,169,106,0.08); }
+.cust-badge-countered { color: #7EB8E8; border-color: rgba(126,184,232,0.4); }
+.cust-badge-declined  { color: #E87; border-color: rgba(238,136,119,0.4); }
+.cust-badge-pending   { color: #AAA; border-color: rgba(170,170,170,0.3); }
+.cust-badge-contacted { color: var(--accent); border-color: var(--border); }
+
+/* Counter / accepted message banners */
+.counter-msg {
+  margin-top: 12px;
+  background: rgba(126,184,232,0.07);
+  border: 1px solid rgba(126,184,232,0.3);
+  padding: 12px 16px;
+  font-family: var(--font-sub);
+  font-size: 0.95rem;
+  color: #9DCFF0;
+  line-height: 1.6;
+}
+.accepted-msg {
+  margin-top: 12px;
+  background: rgba(200,169,106,0.07);
+  border: 1px solid rgba(200,169,106,0.3);
+  padding: 12px 16px;
+  font-family: var(--font-sub);
+  font-size: 0.95rem;
+  color: var(--accent);
+}
+
+@media (max-width: 900px) {
+  .customer-dashboard-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Admin Reservation Action Panels ────────────────────── */
+.res-action-panel {
+  background: #0A0A0A;
+  border-top: 1px solid var(--border);
+  border-bottom: 2px solid var(--accent);
+  padding: 24px 28px;
+}
+.res-detail-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+.res-detail-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.res-detail-val {
+  font-family: var(--font-sub);
+  font-size: 1rem;
+  color: var(--gray-light);
+}
+.res-action-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.counter-form-wrapper {
+  margin-top: 16px;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+
+/* Action buttons */
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 18px;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border: 1px solid;
+  cursor: pointer;
+  background: transparent;
+  transition: var(--transition);
+}
+.action-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.action-accept  { color: #7BD8A0; border-color: rgba(123,216,160,0.5); }
+.action-accept:not(:disabled):hover  { background: rgba(123,216,160,0.1); }
+.action-counter { color: #7EB8E8; border-color: rgba(126,184,232,0.5); }
+.action-counter:hover { background: rgba(126,184,232,0.1); }
+.action-decline { color: #E87; border-color: rgba(238,136,119,0.5); }
+.action-decline:not(:disabled):hover { background: rgba(238,136,119,0.1); }
+.action-pending { color: var(--gray-light); border-color: rgba(170,170,170,0.3); }
+.action-pending:hover { background: rgba(170,170,170,0.07); }
+.action-delete  { color: #E87; border-color: rgba(238,136,119,0.4); margin-left: auto; }
+.action-delete:hover { background: rgba(238,136,119,0.08); }
+
+/* Admin badges for new statuses */
+.badge-accepted  { color: var(--accent); border-color: var(--accent); background: rgba(200,169,106,0.08); }
+.badge-countered { color: #7EB8E8; border-color: rgba(126,184,232,0.4); }
+.badge-declined  { color: #E87; border-color: rgba(238,136,119,0.4); }
+
+/* flash info style */
+.flash-msg.info { background: rgba(126,184,232,0.07); border-color: #7EB8E8; color: #9DCFF0; }
+
+/* stats-grid 6 cols on large screens */
+@media (min-width: 1100px) {
+  .stats-grid { grid-template-columns: repeat(6, 1fr); }
+}

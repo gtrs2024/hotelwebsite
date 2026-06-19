@@ -3,13 +3,14 @@
 {% block page_title %}Reservation Requests{% endblock %}
 {% block content %}
 
+<!-- Search + Filter -->
 <form method="GET" action="{{ url_for('admin_reservations') }}" class="search-bar">
   <input type="text" name="q" value="{{ search }}" placeholder="Search by name, email, or phone...">
   <select name="status">
     <option value="">All Statuses</option>
-    <option value="New" {% if status_filter == 'New' %}selected{% endif %}>New</option>
-    <option value="Contacted" {% if status_filter == 'Contacted' %}selected{% endif %}>Contacted</option>
-    <option value="Pending" {% if status_filter == 'Pending' %}selected{% endif %}>Pending</option>
+    {% for s in ['New','Accepted','Countered','Declined','Contacted','Pending'] %}
+    <option value="{{ s }}" {% if status_filter == s %}selected{% endif %}>{{ s }}</option>
+    {% endfor %}
   </select>
   <button type="submit" class="admin-btn" style="padding:10px 20px;">Search</button>
   {% if search or status_filter %}
@@ -19,7 +20,10 @@
 
 <div class="admin-card">
   <div class="admin-card-header">
-    <h2>All Requests ({{ reservations | length }})</h2>
+    <h2>All Requests ({{ reservations|length }})</h2>
+    <div style="display:flex;gap:8px;">
+      <span style="font-size:0.72rem;color:var(--gray);align-self:center;">Click a row to expand actions</span>
+    </div>
   </div>
   <div class="admin-card-body">
     {% if reservations %}
@@ -27,56 +31,139 @@
       <thead>
         <tr>
           <th>#</th>
-          <th>Name</th>
+          <th>Guest</th>
           <th>Contact</th>
           <th>Date & Time</th>
-          <th>Guests</th>
-          <th>Special Requests</th>
+          <th>Pax</th>
           <th>Status</th>
+          <th>Type</th>
           <th>Received</th>
-          <th>Actions</th>
+          <th style="text-align:right;">Actions</th>
         </tr>
       </thead>
       <tbody>
         {% for r in reservations %}
-        <tr>
+        <tr class="res-table-row" data-id="{{ r.id }}">
           <td style="color:var(--gray);">{{ r.id }}</td>
           <td style="color:var(--white);font-weight:500;">{{ r.customer_name }}</td>
           <td>
-            <span style="display:block;">{{ r.email }}</span>
-            <span style="color:var(--accent);font-size:0.82rem;">{{ r.phone }}</span>
+            <span style="display:block;font-size:0.85rem;">{{ r.email }}</span>
+            <span style="color:var(--accent);font-size:0.8rem;">{{ r.phone }}</span>
           </td>
           <td>{{ r.preferred_date }}<br><span style="color:var(--accent);">{{ r.preferred_time }}</span></td>
           <td style="text-align:center;">{{ r.guests }}</td>
-          <td style="max-width:180px;font-family:var(--font-sub);font-size:0.88rem;color:var(--gray);">
-            {{ r.special_requests or '—' }}
-          </td>
-          <td><span class="badge badge-{{ r.status | lower }}">{{ r.status }}</span></td>
-          <td style="color:var(--gray);font-size:0.8rem;">{{ r.created_at[:16] }}</td>
+          <td><span class="badge badge-{{ r.status|lower|replace(' ','') }}">{{ r.status }}</span></td>
           <td>
-            <div class="admin-actions">
-              <!-- Status dropdown -->
-              <div style="position:relative;display:inline-block;" class="status-dropdown-wrapper">
-                <button class="admin-btn status-dropdown-trigger">Update ▾</button>
-                <div class="status-dropdown-menu" style="display:none;position:absolute;right:0;top:100%;background:#111;border:1px solid var(--border);z-index:99;min-width:130px;">
-                  {% for s in ['New', 'Contacted', 'Pending'] %}
-                  <form method="POST" action="{{ url_for('update_reservation_status', res_id=r.id) }}">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <input type="hidden" name="status" value="{{ s }}">
-                    <button type="submit" class="admin-btn"
-                            style="width:100%;text-align:left;border:none;border-bottom:1px solid var(--border);padding:10px 16px;
-                                   {% if r.status == s %}color:var(--accent);{% endif %}">
-                      {{ s }}
-                    </button>
-                  </form>
-                  {% endfor %}
-                </div>
+            {% if r.cust_id %}
+            <a href="{{ url_for('admin_customer_detail', cust_id=r.cust_id) }}" style="color:var(--accent);font-size:0.78rem;">
+              <i class="fas fa-user-circle"></i> Member
+            </a>
+            {% else %}
+            <span style="color:var(--gray);font-size:0.78rem;">Guest</span>
+            {% endif %}
+          </td>
+          <td style="color:var(--gray);font-size:0.8rem;">{{ r.created_at[:10] }}</td>
+          <td style="text-align:right;">
+            <button class="admin-btn" onclick="toggleActions({{ r.id }})">
+              <i class="fas fa-chevron-down"></i> Actions
+            </button>
+          </td>
+        </tr>
+        <!-- Expanded action row -->
+        <tr class="res-action-row" id="actions-{{ r.id }}" style="display:none;">
+          <td colspan="9" style="padding:0;">
+            <div class="res-action-panel">
+
+              {% if r.special_requests %}
+              <div class="res-detail-block">
+                <span class="res-detail-label">Special Requests</span>
+                <span class="res-detail-val">{{ r.special_requests }}</span>
               </div>
-              <form method="POST" action="{{ url_for('delete_reservation', res_id=r.id) }}"
-                    onsubmit="return confirm('Delete this reservation request?')">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button type="submit" class="admin-btn danger"><i class="fas fa-trash"></i></button>
-              </form>
+              {% endif %}
+              {% if r.counter_message %}
+              <div class="res-detail-block">
+                <span class="res-detail-label">Your Counter Proposal</span>
+                <span class="res-detail-val" style="color:var(--accent);">{{ r.counter_message }}</span>
+              </div>
+              {% endif %}
+              {% if r.admin_note %}
+              <div class="res-detail-block">
+                <span class="res-detail-label">Internal Note</span>
+                <span class="res-detail-val">{{ r.admin_note }}</span>
+              </div>
+              {% endif %}
+
+              <div class="res-action-buttons">
+                <!-- Accept -->
+                <form method="POST" action="{{ url_for('reservation_action', res_id=r.id) }}" style="display:inline;">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <input type="hidden" name="action" value="accept">
+                  <button type="submit" class="action-btn action-accept"
+                          {% if r.status == 'Accepted' %}disabled{% endif %}>
+                    <i class="fas fa-check"></i> Accept
+                  </button>
+                </form>
+
+                <!-- Counter -->
+                <button class="action-btn action-counter" onclick="showCounter({{ r.id }})">
+                  <i class="fas fa-comment-dots"></i> Counter
+                </button>
+
+                <!-- Decline -->
+                <form method="POST" action="{{ url_for('reservation_action', res_id=r.id) }}"
+                      style="display:inline;"
+                      onsubmit="return confirm('Decline this reservation request?')">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <input type="hidden" name="action" value="decline">
+                  <button type="submit" class="action-btn action-decline"
+                          {% if r.status == 'Declined' %}disabled{% endif %}>
+                    <i class="fas fa-times"></i> Decline
+                  </button>
+                </form>
+
+                <!-- Mark Pending -->
+                <form method="POST" action="{{ url_for('reservation_action', res_id=r.id) }}" style="display:inline;">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <input type="hidden" name="action" value="pending">
+                  <button type="submit" class="action-btn action-pending">
+                    <i class="fas fa-clock"></i> Pending
+                  </button>
+                </form>
+
+                <!-- Delete -->
+                <form method="POST" action="{{ url_for('delete_reservation', res_id=r.id) }}"
+                      style="display:inline;margin-left:auto;"
+                      onsubmit="return confirm('Permanently delete this request?')">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <button type="submit" class="action-btn action-delete">
+                    <i class="fas fa-trash"></i> Delete
+                  </button>
+                </form>
+              </div>
+
+              <!-- Counter form (hidden by default) -->
+              <div class="counter-form-wrapper" id="counter-{{ r.id }}" style="display:none;">
+                <form method="POST" action="{{ url_for('reservation_action', res_id=r.id) }}">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <input type="hidden" name="action" value="counter">
+                  <label style="font-size:0.68rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:8px;">
+                    Counter Proposal Message (visible to guest)
+                  </label>
+                  <textarea name="counter_message" rows="2"
+                            placeholder="e.g. We can accommodate you on the 15th at 20:00 instead. Please confirm."
+                            style="width:100%;background:#0D0D0D;border:1px solid var(--border);color:var(--white);padding:12px;font-family:var(--font-body);font-size:0.85rem;resize:none;outline:none;margin-bottom:10px;">{{ r.counter_message or '' }}</textarea>
+                  <label style="font-size:0.68rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--gray);display:block;margin-bottom:8px;">
+                    Internal Note (not shown to guest)
+                  </label>
+                  <input type="text" name="admin_note" value="{{ r.admin_note or '' }}"
+                         placeholder="Internal team note..."
+                         style="width:100%;background:#0D0D0D;border:1px solid var(--border);color:var(--white);padding:10px 14px;font-family:var(--font-body);font-size:0.85rem;outline:none;margin-bottom:12px;">
+                  <button type="submit" class="action-btn action-counter">
+                    <i class="fas fa-paper-plane"></i> Send Counter Proposal
+                  </button>
+                </form>
+              </div>
+
             </div>
           </td>
         </tr>
@@ -95,18 +182,16 @@
 
 {% block scripts %}
 <script>
-document.querySelectorAll('.status-dropdown-trigger').forEach(btn => {
-  btn.addEventListener('click', function(e) {
-    e.stopPropagation();
-    const menu = this.nextElementSibling;
-    document.querySelectorAll('.status-dropdown-menu').forEach(m => {
-      if (m !== menu) m.style.display = 'none';
-    });
-    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
-  });
-});
-document.addEventListener('click', () => {
-  document.querySelectorAll('.status-dropdown-menu').forEach(m => m.style.display = 'none');
-});
+function toggleActions(id) {
+  const row = document.getElementById('actions-' + id);
+  const isVisible = row.style.display !== 'none';
+  // close all
+  document.querySelectorAll('.res-action-row').forEach(r => r.style.display = 'none');
+  if (!isVisible) row.style.display = 'table-row';
+}
+function showCounter(id) {
+  const wrapper = document.getElementById('counter-' + id);
+  wrapper.style.display = wrapper.style.display === 'none' ? 'block' : 'none';
+}
 </script>
 {% endblock %}

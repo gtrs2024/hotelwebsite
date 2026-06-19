@@ -18,8 +18,11 @@
     <a href="{{ url_for('admin_dashboard') }}" {% if request.endpoint == 'admin_dashboard' %}class="active"{% endif %}>
       <i class="fas fa-th-large"></i> Overview
     </a>
-    <a href="{{ url_for('admin_reservations') }}" {% if request.endpoint == 'admin_reservations' %}class="active"{% endif %}>
+    <a href="{{ url_for('admin_reservations') }}" {% if request.endpoint in ('admin_reservations','reservation_action') %}class="active"{% endif %}>
       <i class="fas fa-calendar-check"></i> Reservations
+    </a>
+    <a href="{{ url_for('admin_customers') }}" {% if request.endpoint in ('admin_customers','admin_customer_detail') %}class="active"{% endif %}>
+      <i class="fas fa-users"></i> Customers
     </a>
     <a href="{{ url_for('admin_menu') }}" {% if request.endpoint == 'admin_menu' %}class="active"{% endif %}>
       <i class="fas fa-utensils"></i> Menu

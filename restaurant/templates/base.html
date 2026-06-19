@@ -19,7 +19,24 @@
     <li><a href="{{ url_for('menu') }}" {% if request.endpoint == 'menu' %}class="active"{% endif %}>Menu</a></li>
     <li><a href="{{ url_for('gallery') }}" {% if request.endpoint == 'gallery' %}class="active"{% endif %}>Gallery</a></li>
     <li><a href="{{ url_for('contact') }}" {% if request.endpoint == 'contact' %}class="active"{% endif %}>Contact</a></li>
-    <li><a href="{{ url_for('reservation') }}" class="btn btn-ghost nav-cta">Reserve a Table</a></li>
+
+    {% if current_customer %}
+      <li>
+        <a href="{{ url_for('customer_dashboard') }}" class="nav-member-link {% if request.endpoint == 'customer_dashboard' %}active{% endif %}">
+          <span class="nav-avatar">{{ current_customer.name[0].upper() }}</span>
+          {{ current_customer.name.split()[0] }}
+        </a>
+      </li>
+      <li>
+        <form method="POST" action="{{ url_for('customer_logout') }}" style="margin:0;">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn btn-ghost nav-cta" style="cursor:pointer;">Sign Out</button>
+        </form>
+      </li>
+    {% else %}
+      <li><a href="{{ url_for('customer_login') }}" {% if request.endpoint in ('customer_login','customer_register') %}class="active"{% endif %}>Sign In</a></li>
+      <li><a href="{{ url_for('reservation') }}" class="btn btn-ghost nav-cta">Reserve a Table</a></li>
+    {% endif %}
   </ul>
   <button class="nav-toggle" id="navToggle" aria-label="Open menu">
     <span></span><span></span><span></span>
@@ -33,6 +50,12 @@
   <a href="{{ url_for('menu') }}" onclick="closeNav()">Menu</a>
   <a href="{{ url_for('gallery') }}" onclick="closeNav()">Gallery</a>
   <a href="{{ url_for('contact') }}" onclick="closeNav()">Contact</a>
+  {% if current_customer %}
+  <a href="{{ url_for('customer_dashboard') }}" onclick="closeNav()">My Dashboard</a>
+  {% else %}
+  <a href="{{ url_for('customer_login') }}" onclick="closeNav()">Sign In</a>
+  <a href="{{ url_for('customer_register') }}" onclick="closeNav()">Register</a>
+  {% endif %}
   <a href="{{ url_for('reservation') }}" onclick="closeNav()">Reserve</a>
 </nav>
 
@@ -59,6 +82,11 @@
           <li><a href="{{ url_for('gallery') }}">Gallery</a></li>
           <li><a href="{{ url_for('reservation') }}">Reserve a Table</a></li>
           <li><a href="{{ url_for('contact') }}">Contact</a></li>
+          {% if current_customer %}
+          <li><a href="{{ url_for('customer_dashboard') }}">My Dashboard</a></li>
+          {% else %}
+          <li><a href="{{ url_for('customer_register') }}">Create Account</a></li>
+          {% endif %}
         </ul>
       </div>
       <div class="footer-col">
@@ -66,7 +94,7 @@
         <ul>
           <li><a href="#">The Ridge, Lonavala<br>Maharashtra 410401</a></li>
           <li><a href="tel:+912114200100">+91 2114 200 100</a></li>
-          <li><a href="mailto:reservations@elaraLonavala.com">reservations@elaralonavala.com</a></li>
+          <li><a href="mailto:reservations@elaralonavala.com">reservations@elaralonavala.com</a></li>
         </ul>
       </div>
     </div>

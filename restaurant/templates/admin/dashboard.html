@@ -17,12 +17,12 @@
     <span class="stat-card-label">New (Unread)</span>
   </div>
   <div class="stat-card">
-    <span class="stat-card-value">{{ stats.total_menu }}</span>
-    <span class="stat-card-label">Menu Items</span>
+    <span class="stat-card-value">{{ stats.total_customers }}</span>
+    <span class="stat-card-label">Registered Guests</span>
   </div>
   <div class="stat-card">
-    <span class="stat-card-value">{{ stats.total_gallery }}</span>
-    <span class="stat-card-label">Gallery Images</span>
+    <span class="stat-card-value">{{ stats.total_menu }}</span>
+    <span class="stat-card-label">Menu Items</span>
   </div>
 </div>
 
@@ -36,23 +36,35 @@
     <table class="admin-table">
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Date</th>
-          <th>Time</th>
+          <th>Guest</th>
+          <th>Account</th>
+          <th>Date & Time</th>
           <th>Guests</th>
           <th>Status</th>
           <th>Received</th>
+          <th>Action</th>
         </tr>
       </thead>
       <tbody>
         {% for r in recent %}
         <tr>
-          <td>{{ r.customer_name }}</td>
-          <td>{{ r.preferred_date }}</td>
-          <td>{{ r.preferred_time }}</td>
+          <td style="color:var(--white);">{{ r.customer_name }}</td>
+          <td>
+            {% if r.cust_name %}
+            <a href="{{ url_for('admin_customer_detail', cust_id=r.customer_id) }}" style="color:var(--accent);font-size:0.82rem;">
+              <i class="fas fa-user-circle" style="margin-right:4px;"></i>Member
+            </a>
+            {% else %}
+            <span style="color:var(--gray);font-size:0.8rem;">Guest</span>
+            {% endif %}
+          </td>
+          <td>{{ r.preferred_date }}<br><span style="color:var(--accent);">{{ r.preferred_time }}</span></td>
           <td>{{ r.guests }}</td>
-          <td><span class="badge badge-{{ r.status | lower }}">{{ r.status }}</span></td>
-          <td style="color:var(--gray);">{{ r.created_at[:16] }}</td>
+          <td><span class="badge badge-{{ r.status|lower|replace(' ','') }}">{{ r.status }}</span></td>
+          <td style="color:var(--gray);">{{ r.created_at[:10] }}</td>
+          <td>
+            <a href="{{ url_for('admin_reservations') }}" class="admin-btn" style="font-size:0.65rem;">Manage</a>
+          </td>
         </tr>
         {% endfor %}
       </tbody>
@@ -65,36 +77,26 @@
 
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
   <div class="admin-card">
-    <div class="admin-card-header">
-      <h2>Quick Links</h2>
-    </div>
+    <div class="admin-card-header"><h2>Quick Links</h2></div>
     <div class="admin-card-body" style="padding:24px;">
       <div style="display:flex;flex-direction:column;gap:10px;">
         <a href="{{ url_for('admin_reservations') }}" class="admin-btn" style="text-align:center;padding:12px;"><i class="fas fa-calendar-check" style="margin-right:8px;"></i>Manage Reservations</a>
+        <a href="{{ url_for('admin_customers') }}" class="admin-btn" style="text-align:center;padding:12px;"><i class="fas fa-users" style="margin-right:8px;"></i>View Customers</a>
         <a href="{{ url_for('admin_menu') }}" class="admin-btn" style="text-align:center;padding:12px;"><i class="fas fa-utensils" style="margin-right:8px;"></i>Manage Menu</a>
         <a href="{{ url_for('admin_gallery') }}" class="admin-btn" style="text-align:center;padding:12px;"><i class="fas fa-images" style="margin-right:8px;"></i>Manage Gallery</a>
       </div>
     </div>
   </div>
-
   <div class="admin-card">
-    <div class="admin-card-header">
-      <h2>Status Legend</h2>
-    </div>
+    <div class="admin-card-header"><h2>Status Guide</h2></div>
     <div class="admin-card-body" style="padding:24px;">
-      <div style="display:flex;flex-direction:column;gap:14px;">
-        <div style="display:flex;align-items:center;gap:14px;">
-          <span class="badge badge-new">New</span>
-          <span style="font-family:var(--font-sub);color:var(--gray-light);font-size:0.9rem;">Request received, not yet acted on.</span>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        {% for s, desc in [('New','Fresh request, not yet reviewed'),('Accepted','Confirmed — guest is coming'),('Countered','Alternative proposed to guest'),('Declined','Request could not be accommodated'),('Pending','Awaiting guest confirmation')] %}
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span class="badge badge-{{ s|lower }}">{{ s }}</span>
+          <span style="font-family:var(--font-sub);color:var(--gray-light);font-size:0.88rem;">{{ desc }}</span>
         </div>
-        <div style="display:flex;align-items:center;gap:14px;">
-          <span class="badge badge-contacted">Contacted</span>
-          <span style="font-family:var(--font-sub);color:var(--gray-light);font-size:0.9rem;">Guest has been reached out to.</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:14px;">
-          <span class="badge badge-pending">Pending</span>
-          <span style="font-family:var(--font-sub);color:var(--gray-light);font-size:0.9rem;">Awaiting guest confirmation.</span>
-        </div>
+        {% endfor %}
       </div>
     </div>
   </div>

@@ -9,6 +9,7 @@ def get_db():
     conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode=WAL")
+    conn.execute("PRAGMA foreign_keys=ON")
     return conn
 
 
@@ -22,8 +23,18 @@ def init_db():
         password_hash TEXT NOT NULL
     )''')
 
+    c.execute('''CREATE TABLE IF NOT EXISTS customers (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        phone TEXT,
+        password_hash TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )''')
+
     c.execute('''CREATE TABLE IF NOT EXISTS reservations (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        customer_id INTEGER REFERENCES customers(id) ON DELETE SET NULL,
         customer_name TEXT NOT NULL,
         phone TEXT NOT NULL,
         email TEXT NOT NULL,
@@ -32,6 +43,8 @@ def init_db():
         guests INTEGER NOT NULL,
         special_requests TEXT,
         status TEXT DEFAULT 'New',
+        counter_message TEXT,
+        admin_note TEXT,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )''')
 
@@ -48,6 +61,16 @@ def init_db():
         image_path TEXT NOT NULL,
         caption TEXT
     )''')
+
+    # ── Migrations: safely add columns if they don't exist ──
+    existing_cols = {row[1] for row in c.execute("PRAGMA table_info(reservations)")}
+    for col, defn in [
+        ('customer_id',     'INTEGER REFERENCES customers(id) ON DELETE SET NULL'),
+        ('counter_message', 'TEXT'),
+        ('admin_note',      'TEXT'),
+    ]:
+        if col not in existing_cols:
+            c.execute(f'ALTER TABLE reservations ADD COLUMN {col} {defn}')
 
     # Seed admin
     c.execute('SELECT COUNT(*) FROM admins')

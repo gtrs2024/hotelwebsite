@@ -1,0 +1,53 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Customers | Elara Admin{% endblock %}
+{% block page_title %}Registered Guests{% endblock %}
+{% block content %}
+
+<div class="admin-card">
+  <div class="admin-card-header">
+    <h2>All Registered Guests ({{ customers|length }})</h2>
+  </div>
+  <div class="admin-card-body">
+    {% if customers %}
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Reservations</th>
+          <th>Member Since</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in customers %}
+        <tr>
+          <td style="color:var(--gray);">{{ c.id }}</td>
+          <td style="color:var(--white);font-weight:500;">
+            <span class="nav-avatar" style="width:28px;height:28px;font-size:0.72rem;margin-right:8px;display:inline-flex;align-items:center;justify-content:center;">{{ c.name[0].upper() }}</span>
+            {{ c.name }}
+          </td>
+          <td>{{ c.email }}</td>
+          <td style="color:var(--gray-light);">{{ c.phone or '—' }}</td>
+          <td style="text-align:center;">
+            <span style="color:var(--accent);">{{ c.reservation_count }}</span>
+          </td>
+          <td style="color:var(--gray);">{{ c.created_at[:10] }}</td>
+          <td>
+            <a href="{{ url_for('admin_customer_detail', cust_id=c.id) }}" class="admin-btn">
+              <i class="fas fa-eye"></i> View
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p style="padding:48px;text-align:center;color:var(--gray);font-family:var(--font-sub);">No registered guests yet.</p>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

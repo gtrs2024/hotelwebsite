@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% block title %}My Dashboard | Elara{% endblock %}
+{% block content %}
+
+<!-- Dashboard Hero -->
+<div style="background:#0A0A0A;border-bottom:1px solid var(--border);padding:100px 0 48px;">
+  <div class="container">
+    <span class="eyebrow">Member Portal</span>
+    <h1 style="font-family:var(--font-heading);font-size:clamp(1.8rem,3.5vw,2.8rem);color:var(--white);margin-bottom:10px;">
+      Welcome back, <em style="color:var(--accent);font-style:italic;">{{ customer.name }}</em>
+    </h1>
+    <p style="font-family:var(--font-sub);font-size:1.05rem;color:var(--gray);">
+      Member since {{ customer.created_at[:10] }} &nbsp;·&nbsp; {{ reservations|length }} reservation{{ 's' if reservations|length != 1 }}
+    </p>
+  </div>
+</div>
+
+<section class="section section-dark" style="padding:56px 0 80px;">
+  <div class="container">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for cat, msg in messages %}
+    <div class="flash-msg {{ cat }}" style="margin-bottom:24px;">
+      <i class="fas {% if cat == 'success' %}fa-check-circle{% else %}fa-info-circle{% endif %}" style="margin-right:8px;"></i>{{ msg }}
+    </div>
+    {% endfor %}
+    {% endwith %}
+
+    <div class="customer-dashboard-grid">
+
+      <!-- Left: Profile Card -->
+      <div>
+        <div class="cust-card">
+          <div class="cust-card-header">
+            <span class="eyebrow" style="margin:0;">Your Profile</span>
+          </div>
+          <div class="cust-card-body">
+            <div class="cust-avatar">{{ customer.name[0].upper() }}</div>
+            <div class="cust-profile-info">
+              <div class="cust-info-row">
+                <span class="cust-info-label"><i class="fas fa-user"></i> Name</span>
+                <span class="cust-info-value">{{ customer.name }}</span>
+              </div>
+              <div class="cust-info-row">
+                <span class="cust-info-label"><i class="fas fa-envelope"></i> Email</span>
+                <span class="cust-info-value">{{ customer.email }}</span>
+              </div>
+              <div class="cust-info-row">
+                <span class="cust-info-label"><i class="fas fa-phone"></i> Phone</span>
+                <span class="cust-info-value">{{ customer.phone or '—' }}</span>
+              </div>
+              <div class="cust-info-row">
+                <span class="cust-info-label"><i class="fas fa-calendar-alt"></i> Member Since</span>
+                <span class="cust-info-value">{{ customer.created_at[:10] }}</span>
+              </div>
+            </div>
+            <a href="{{ url_for('customer_profile') }}" class="btn btn-ghost" style="width:100%;text-align:center;margin-top:24px;display:block;">
+              <i class="fas fa-edit" style="margin-right:8px;"></i>Edit Profile
+            </a>
+          </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="cust-card" style="margin-top:16px;">
+          <div class="cust-card-header">
+            <span class="eyebrow" style="margin:0;">At a Glance</span>
+          </div>
+          <div class="cust-card-body" style="padding:20px 24px;">
+            <div class="cust-stats">
+              <div class="cust-stat">
+                <span class="cust-stat-num">{{ upcoming|length }}</span>
+                <span class="cust-stat-lbl">Upcoming</span>
+              </div>
+              <div class="cust-stat">
+                <span class="cust-stat-num">{{ past|length }}</span>
+                <span class="cust-stat-lbl">Past</span>
+              </div>
+              <div class="cust-stat">
+                <span class="cust-stat-num">{{ reservations|selectattr('status','equalto','Accepted')|list|length }}</span>
+                <span class="cust-stat-lbl">Confirmed</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <a href="{{ url_for('reservation') }}" class="btn btn-primary" style="width:100%;text-align:center;display:block;margin-top:16px;">
+          <i class="fas fa-plus" style="margin-right:8px;"></i>New Reservation Request
+        </a>
+      </div>
+
+      <!-- Right: Reservations -->
+      <div>
+
+        <!-- Upcoming / Active -->
+        <div class="cust-card" style="margin-bottom:20px;">
+          <div class="cust-card-header">
+            <span class="eyebrow" style="margin:0;">Upcoming & Active Requests</span>
+            <span style="font-size:0.72rem;color:var(--gray);">{{ upcoming|length }} request{{ 's' if upcoming|length != 1 }}</span>
+          </div>
+          <div class="cust-card-body" style="padding:0;">
+            {% if upcoming %}
+            {% for r in upcoming %}
+            <div class="res-row {% if not loop.last %}res-row-border{% endif %}">
+              <div class="res-row-main">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+                  <span class="cust-badge cust-badge-{{ r.status|lower }}">{{ r.status }}</span>
+                  <span style="font-family:var(--font-heading);font-size:1.05rem;color:var(--white);">
+                    {{ r.preferred_date }} at {{ r.preferred_time }}
+                  </span>
+                </div>
+                <div style="display:flex;gap:24px;font-family:var(--font-sub);font-size:0.95rem;color:var(--gray-light);flex-wrap:wrap;">
+                  <span><i class="fas fa-users" style="color:var(--accent);margin-right:6px;"></i>{{ r.guests }} guest{{ 's' if r.guests != 1 }}</span>
+                  {% if r.special_requests %}
+                  <span><i class="fas fa-comment" style="color:var(--accent);margin-right:6px;"></i>{{ r.special_requests[:60] }}{% if r.special_requests|length > 60 %}…{% endif %}</span>
+                  {% endif %}
+                </div>
+                {% if r.status == 'Countered' and r.counter_message %}
+                <div class="counter-msg">
+                  <i class="fas fa-comment-dots" style="color:var(--accent);margin-right:8px;"></i>
+                  <strong style="color:var(--accent);">Hotel's counter proposal:</strong>
+                  {{ r.counter_message }}
+                </div>
+                {% endif %}
+                {% if r.status == 'Accepted' %}
+                <div class="accepted-msg">
+                  <i class="fas fa-check-circle" style="margin-right:8px;"></i>
+                  Your reservation is confirmed! We look forward to welcoming you.
+                </div>
+                {% endif %}
+              </div>
+              <div class="res-row-meta">
+                <span style="font-size:0.72rem;color:var(--gray);">Requested {{ r.created_at[:10] }}</span>
+              </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div style="padding:40px;text-align:center;">
+              <p style="font-family:var(--font-sub);color:var(--gray);font-size:1rem;">No upcoming reservations.</p>
+              <a href="{{ url_for('reservation') }}" class="btn btn-ghost" style="margin-top:16px;display:inline-block;">Make a Request</a>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Past / Declined -->
+        {% if past %}
+        <div class="cust-card">
+          <div class="cust-card-header">
+            <span class="eyebrow" style="margin:0;">Past Reservations</span>
+            <span style="font-size:0.72rem;color:var(--gray);">{{ past|length }} record{{ 's' if past|length != 1 }}</span>
+          </div>
+          <div class="cust-card-body" style="padding:0;">
+            {% for r in past %}
+            <div class="res-row {% if not loop.last %}res-row-border{% endif %}" style="opacity:0.72;">
+              <div class="res-row-main">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+                  <span class="cust-badge cust-badge-{{ r.status|lower }}">{{ r.status }}</span>
+                  <span style="font-family:var(--font-heading);font-size:1rem;color:var(--gray-light);">
+                    {{ r.preferred_date }} at {{ r.preferred_time }}
+                  </span>
+                </div>
+                <span style="font-family:var(--font-sub);font-size:0.9rem;color:var(--gray);">
+                  <i class="fas fa-users" style="margin-right:6px;"></i>{{ r.guests }} guest{{ 's' if r.guests != 1 }}
+                </span>
+              </div>
+              <div class="res-row-meta">
+                <span style="font-size:0.72rem;color:var(--gray);">{{ r.created_at[:10] }}</span>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+{% endblock %}

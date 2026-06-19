@@ -1,0 +1,83 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}{{ customer.name }} | Elara Admin{% endblock %}
+{% block page_title %}Guest Profile{% endblock %}
+{% block content %}
+
+<div style="display:grid;grid-template-columns:320px 1fr;gap:24px;align-items:start;">
+
+  <!-- Profile Card -->
+  <div>
+    <div class="admin-card">
+      <div class="admin-card-header"><h2>Profile</h2></div>
+      <div class="admin-card-body" style="padding:28px;">
+        <div style="text-align:center;margin-bottom:24px;">
+          <div class="nav-avatar" style="width:64px;height:64px;font-size:1.5rem;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;">
+            {{ customer.name[0].upper() }}
+          </div>
+          <h3 style="font-family:var(--font-heading);font-size:1.3rem;color:var(--white);">{{ customer.name }}</h3>
+          <p style="font-size:0.72rem;color:var(--gray);margin-top:4px;">Member since {{ customer.created_at[:10] }}</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <div class="cust-info-row" style="border-bottom:1px solid var(--border);padding-bottom:14px;">
+            <span class="cust-info-label"><i class="fas fa-envelope"></i> Email</span>
+            <span class="cust-info-value" style="word-break:break-all;">{{ customer.email }}</span>
+          </div>
+          <div class="cust-info-row" style="border-bottom:1px solid var(--border);padding-bottom:14px;">
+            <span class="cust-info-label"><i class="fas fa-phone"></i> Phone</span>
+            <span class="cust-info-value">{{ customer.phone or '—' }}</span>
+          </div>
+          <div class="cust-info-row">
+            <span class="cust-info-label"><i class="fas fa-calendar-check"></i> Total Reservations</span>
+            <span class="cust-info-value" style="color:var(--accent);font-family:var(--font-heading);font-size:1.2rem;">{{ reservations|length }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <a href="{{ url_for('admin_customers') }}" class="admin-btn" style="display:block;text-align:center;margin-top:12px;padding:12px;">
+      <i class="fas fa-arrow-left" style="margin-right:6px;"></i>Back to Guests
+    </a>
+  </div>
+
+  <!-- Reservations -->
+  <div class="admin-card">
+    <div class="admin-card-header">
+      <h2>Reservation History</h2>
+      <span style="font-size:0.72rem;color:var(--gray);">{{ reservations|length }} total</span>
+    </div>
+    <div class="admin-card-body">
+      {% if reservations %}
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Date & Time</th>
+            <th>Guests</th>
+            <th>Special Requests</th>
+            <th>Status</th>
+            <th>Counter Message</th>
+            <th>Submitted</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in reservations %}
+          <tr>
+            <td style="color:var(--gray);">{{ r.id }}</td>
+            <td>{{ r.preferred_date }}<br><span style="color:var(--accent);">{{ r.preferred_time }}</span></td>
+            <td style="text-align:center;">{{ r.guests }}</td>
+            <td style="font-family:var(--font-sub);color:var(--gray);font-size:0.85rem;max-width:180px;">{{ r.special_requests or '—' }}</td>
+            <td><span class="badge badge-{{ r.status|lower|replace(' ','') }}">{{ r.status }}</span></td>
+            <td style="font-family:var(--font-sub);color:var(--accent);font-size:0.85rem;max-width:200px;">{{ r.counter_message or '—' }}</td>
+            <td style="color:var(--gray);font-size:0.8rem;">{{ r.created_at[:10] }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p style="padding:40px;text-align:center;color:var(--gray);font-family:var(--font-sub);">No reservations yet.</p>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}
