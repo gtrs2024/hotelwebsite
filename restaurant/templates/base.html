@@ -37,11 +37,6 @@
       <li><a href="{{ url_for('customer_login') }}" {% if request.endpoint in ('customer_login','customer_register') %}class="active"{% endif %}>Sign In</a></li>
       <li><a href="{{ url_for('reservation') }}" class="btn btn-ghost nav-cta">Reserve a Table</a></li>
     {% endif %}
-    <li>
-      <a href="{{ url_for('admin_login') }}" class="nav-admin-btn" title="Staff Portal">
-        <i class="fas fa-lock"></i> Admin
-      </a>
-    </li>
   </ul>
   <button class="nav-toggle" id="navToggle" aria-label="Open menu">
     <span></span><span></span><span></span>
@@ -93,6 +88,7 @@
           {% else %}
           <li><a href="{{ url_for('customer_register') }}">Create Account</a></li>
           {% endif %}
+          <li><a href="{{ url_for('admin_login') }}" style="color:var(--gray);font-size:0.82rem;"><i class="fas fa-lock" style="margin-right:6px;font-size:0.7rem;"></i>Admin Portal</a></li>
         </ul>
       </div>
       <div class="footer-col">
